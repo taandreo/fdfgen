@@ -1,0 +1,1 @@
+- Abrir o arquivo de fontes;
