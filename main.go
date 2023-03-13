@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/taandreo/fdfgen/figletlib"
@@ -17,7 +18,7 @@ var fgColor string
 var height int
 
 func main() {
-	flag.StringVar(&msg, "msg", "", "Message to be printed on screen: E.g -msg Hello, World")
+	flag.StringVar(&msg, "msg", "", "Message to be printed on screen: E.g. -msg Hello, World")
 	flag.StringVar(&fdf, "map", "", "Name of the map file to be saved: E.g. -map example.fdf")
 	flag.StringVar(&bgColor, "bg", "", "The background color in Hexadecimal: E.g. -bg 0xFFFFFF")
 	flag.StringVar(&fgColor, "fg", "", "The foreground color in Hexadecimal: E.g. -fg 0xFFFFFF")
@@ -32,7 +33,11 @@ func main() {
 		fmt.Fprintln(os.Stderr, "Error: You must type the name of the map to be saved")
 		os.Exit(1)
 	}
-	font, err := figletlib.GetFontByName("figletlib/fonts", "banner.flf")
+	if !validateHex(fgColor) || !validateHex(bgColor) {
+		fmt.Fprintln(os.Stderr, "Error: You must type a 6 digits Hexadecimal number, starting with 0x: E.g. 0xFFFFFF")
+		os.Exit(1)
+	}
+	font, err := figletlib.GetFontByName("figletlib/fonts", "banner")
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)
@@ -53,6 +58,17 @@ func main() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+}
+
+func validateHex(str string) bool {
+	if !(len(str) == 8) || !(str[:2] == "0x") {
+		return false
+	}
+	_, err := strconv.ParseUint(str[2:], 16, 64)
+	if err != nil {
+		return false
+	}
+	return true
 }
 
 func createLine(line string, bgColor string, fgColor string, height int) string {
