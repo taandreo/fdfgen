@@ -3,11 +3,12 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/taandreo/go-figure"
 	"io"
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/taandreo/go-figure"
 )
 
 var msg string
@@ -40,7 +41,8 @@ func main() {
 	}
 	myFigure := figure.NewFigure(msg, "banner", true)
 	text := myFigure.String()
-	myFigure.Print()
+	text = addPad(text)
+	fmt.Print(text)
 	f, err := os.Create(fdf)
 	if err != nil {
 		fmt.Println(err)
@@ -54,6 +56,20 @@ func main() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+}
+
+func addPad(text string) string {
+	var newText string
+	maxLine := getLineSize(text)
+	newText += strings.Repeat(" ", maxLine+1) + "\n"
+	for _, line := range strings.Split(text, "\n") {
+		lenLine := len(line)
+		if lenLine < maxLine {
+			line += strings.Repeat(" ", maxLine-lenLine)
+		}
+		newText += line + " " + "\n"
+	}
+	return newText
 }
 
 func validateHex(str string) bool {
@@ -86,6 +102,20 @@ func createLine(line string, bgColor string, fgColor string, height int) string 
 		fdfLine += " "
 	}
 	return fdfLine
+}
+
+func getLineSize(text string) int {
+	var maxLine int
+	for i, line := range strings.Split(text, "\n") {
+		lenLine := len(line)
+		if i == 0 {
+			maxLine = lenLine
+		}
+		if lenLine > maxLine {
+			maxLine = lenLine
+		}
+	}
+	return maxLine
 }
 
 func textTofdf(text string, bgColor string, fgColor string, height int) string {
