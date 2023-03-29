@@ -3,12 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/taandreo/go-figure"
 	"io"
 	"os"
 	"strconv"
 	"strings"
-
-	"github.com/taandreo/fdfgen/figletlib"
 )
 
 var msg string
@@ -33,18 +32,15 @@ func main() {
 		fmt.Fprintln(os.Stderr, "Error: You must type the name of the map to be saved")
 		os.Exit(1)
 	}
-	if !validateHex(fgColor) || !validateHex(bgColor) {
-		fmt.Fprintln(os.Stderr, "Error: You must type a 6 digits Hexadecimal number, starting with 0x: E.g. 0xFFFFFF")
-		os.Exit(1)
+	if fgColor != "" || bgColor != "" {
+		if !validateHex(fgColor) || !validateHex(bgColor) {
+			fmt.Fprintln(os.Stderr, "Error: You must type a 6 digits Hexadecimal number, starting with 0x: E.g. 0xFFFFFF")
+			os.Exit(1)
+		}
 	}
-	font, err := figletlib.GetFontByName("figletlib/fonts", "banner")
-	if err != nil {
-		fmt.Println(err.Error())
-		os.Exit(1)
-	}
-	settings := font.Settings()
-	// figletlib.SPrintMsg(msg, font, 80, settings, "center")
-	text := figletlib.SprintMsg(msg, font, 80, settings, "letf")
+	myFigure := figure.NewFigure(msg, "banner", true)
+	text := myFigure.String()
+	myFigure.Print()
 	f, err := os.Create(fdf)
 	if err != nil {
 		fmt.Println(err)
