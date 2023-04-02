@@ -16,6 +16,7 @@ var fdf string
 var bgColor string
 var fgColor string
 var height int
+var words int
 
 func main() {
 	flag.StringVar(&msg, "msg", "", "Message to be printed on screen: E.g. -msg Hello, World")
@@ -23,6 +24,7 @@ func main() {
 	flag.StringVar(&bgColor, "bg", "", "The background color in Hexadecimal: E.g. -bg 0xFFFFFF")
 	flag.StringVar(&fgColor, "fg", "", "The foreground color in Hexadecimal: E.g. -fg 0xFFFFFF")
 	flag.IntVar(&height, "height", 3, "The height of the map(default value is 3): E.g. -height 5")
+	flag.IntVar(&words, "w", 0, "The maximum number of words/line. E.g. -w 3")
 	flag.Parse()
 
 	if msg == "" {
@@ -39,10 +41,18 @@ func main() {
 			os.Exit(1)
 		}
 	}
-	myFigure := figure.NewFigure(msg, "banner", true)
-	text := myFigure.String()
-	text = addPad(text)
-	fmt.Print(text)
+	if words > 0 {
+		msg = wrapLines(msg, words)
+	}
+
+	// Split the msg given by the user and transform each one into figurines
+	text := ""
+	for _, value := range strings.Split(msg, "\n") {
+		myFigure := figure.NewFigure(value, "banner", true)
+		text += myFigure.String()
+		text = addPad(text)
+	}
+
 	f, err := os.Create(fdf)
 	if err != nil {
 		fmt.Println(err)
@@ -70,6 +80,34 @@ func addPad(text string) string {
 		newText += line + " " + "\n"
 	}
 	return newText
+}
+
+func wrapLines(msg string, words int) string {
+	if strings.Count(msg, " ") >= words {
+		index := findIndex(msg, words, " ")
+		return replaceAtIndex(msg, '\n', index)
+	}
+	return msg
+}
+
+func replaceAtIndex(msg string, replacement rune, index int) string {
+	return msg[:index] + string(replacement) + msg[index+1:]
+}
+
+func findIndex(msg string, words int, toFind string) int {
+	index := 0
+	for i := 1; i <= words; i++ {
+		nth := strings.Index(msg[index:], toFind)
+		if nth < 0 {
+			break
+		}
+		index += nth
+		if i == words {
+			break
+		}
+		index += len(toFind)
+	}
+	return index
 }
 
 func validateHex(str string) bool {
