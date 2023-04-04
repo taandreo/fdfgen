@@ -83,31 +83,23 @@ func addPad(text string) string {
 }
 
 func wrapLines(msg string, words int) string {
-	if strings.Count(msg, " ") >= words {
-		index := findIndex(msg, words, " ")
-		return replaceAtIndex(msg, '\n', index)
+	final := ""
+	msgSlice := strings.Fields(msg)
+	lenght := len(msgSlice)
+	if lenght <= words {
+		return msg
 	}
-	return msg
-}
-
-func replaceAtIndex(msg string, replacement rune, index int) string {
-	return msg[:index] + string(replacement) + msg[index+1:]
-}
-
-func findIndex(msg string, words int, toFind string) int {
-	index := 0
-	for i := 1; i <= words; i++ {
-		nth := strings.Index(msg[index:], toFind)
-		if nth < 0 {
-			break
+	for i, word := range msgSlice {
+		if i == lenght {
+			continue
 		}
-		index += nth
-		if i == words {
-			break
+		if (i+1)%words == 0 {
+			final += word + "\n"
+		} else {
+			final += word + " "
 		}
-		index += len(toFind)
 	}
-	return index
+	return final
 }
 
 func validateHex(str string) bool {
