@@ -17,6 +17,7 @@ var bgColor string
 var fgColor string
 var height int
 var words int
+var preview bool
 
 func main() {
 	flag.StringVar(&msg, "msg", "", "Message to be printed on screen: E.g. -msg Hello, World")
@@ -25,6 +26,7 @@ func main() {
 	flag.StringVar(&fgColor, "fg", "", "The foreground color in Hexadecimal: E.g. -fg 0xFFFFFF")
 	flag.IntVar(&height, "height", 3, "The height of the map(default value is 3): E.g. -height 5")
 	flag.IntVar(&words, "w", 0, "The maximum number of words/line. E.g. -w 3")
+	flag.BoolVar(&preview, "p", false, "Print a preview of the message, and close the program")
 	flag.Parse()
 
 	if msg == "" {
@@ -51,6 +53,11 @@ func main() {
 		myFigure := figure.NewFigure(value, "banner", true)
 		text += myFigure.String()
 		text = addPad(text)
+	}
+
+	if preview {
+		fmt.Print(text)
+		os.Exit(0)
 	}
 
 	f, err := os.Create(fdf)
