@@ -86,8 +86,8 @@ func wrapLines(msg string, words int) string {
 	final := ""
 	msgSlice := strings.Fields(msg)
 	lenght := len(msgSlice)
-	if lenght <= words {
-		return msg
+	if lenght == 1 {
+		return msgSlice[0]
 	}
 	for i, word := range msgSlice {
 		if i == lenght {
