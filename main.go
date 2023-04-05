@@ -49,11 +49,17 @@ func main() {
 
 	// Split the msg given by the user and transform each one into figurines
 	text := ""
-	for _, value := range strings.Split(msg, "\n") {
+	splitMsg := strings.Split(msg, "\n")
+	lenSplit := len(splitMsg)
+	for index, value := range splitMsg {
 		myFigure := figure.NewFigure(value, "banner", true)
-		text += myFigure.String()
-		text = addPad(text)
+		if index != lenSplit-1 {
+			text += myFigure.String() + strings.Repeat("\n", 2)
+		} else {
+			text += myFigure.String()
+		}
 	}
+	text = addPad(text)
 
 	if preview {
 		fmt.Print(text)
@@ -97,8 +103,9 @@ func wrapLines(msg string, words int) string {
 		return msgSlice[0]
 	}
 	for i, word := range msgSlice {
-		if i == lenght {
-			continue
+		if (i + 1) == lenght {
+			final += word
+			break
 		}
 		if (i+1)%words == 0 {
 			final += word + "\n"
