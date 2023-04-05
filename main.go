@@ -33,7 +33,7 @@ func main() {
 		fmt.Fprintln(os.Stderr, "Error: No message passed to the program")
 		os.Exit(1)
 	}
-	if fdf == "" {
+	if fdf == "" && !preview {
 		fmt.Fprintln(os.Stderr, "Error: You must type the name of the map to be saved")
 		os.Exit(1)
 	}
