@@ -52,7 +52,7 @@ The `-p` flag takes no arguments and it is useful if you want to preview your me
 
 ---
 
-`./fdfgen -msg "Hello World!" -w 1 -map example.fdf -fg 0xba77db -bg 0x54ac97`
+`./fdfgen -msg "42SP" -w 1 -map example.fdf -fg 0xba77db -bg 0x54ac97`
 
 ![42SP](pictures/42sp.png)
 
